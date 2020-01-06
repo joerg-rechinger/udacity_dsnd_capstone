@@ -20,14 +20,15 @@ from tqdm import tqdm
 from glob import glob
 import tensorflow as tf
 
-# define function to load train, test, and validation datasets
+#reading in the dog names from the classroom files (were not provided for download)
 dog_names=[]
 with open('./data/dog_names.json') as json_file:
     dog_names = json.load(json_file)
-#dog detector
+
 # define ResNet50 model
 ResNet50_model = ResNet50(weights='imagenet')
 
+#define generic function for pre-processing images into 4d tensor as input for CNN
 def path_to_tensor(img_path):
     # loads RGB image as PIL.Image.Image type
     img = image.load_img(img_path, target_size=(224, 224))
@@ -36,10 +37,7 @@ def path_to_tensor(img_path):
     # convert 3D tensor to 4D tensor with shape (1, 224, 224, 3) and return 4D tensor
     return np.expand_dims(x, axis=0)
 
-def paths_to_tensor(img_paths):
-    list_of_tensors = [path_to_tensor(img_path) for img_path in tqdm(img_paths)]
-    return np.vstack(list_of_tensors)
-
+#predicts the dog breed based on the pretrained ResNet50 models with weights from imagenet
 def ResNet50_predict_labels(img_path):
     # returns prediction vector for image located at img_path
     img = preprocess_input(path_to_tensor(img_path))
@@ -58,31 +56,34 @@ def face_detector(img_path):
     faces = face_cascade.detectMultiScale(gray)
     return len(faces) > 0
 
-
+#function to predict an image based on the ResNet50 model with imagenet weights
 def extract_Resnet50(tensor):
 	return ResNet50(weights='imagenet', include_top=False).predict(preprocess_input(tensor))
 
+#instantiate the pre-trained model from disk
 def instantiate_model():
     #build model
     global model
+    #load features
     bottleneck_features = np.load('./data/DogResnet50Data.npz')
     train_Resnet = bottleneck_features['train']
     valid_Resnet = bottleneck_features['valid']
     test_Resnet = bottleneck_features['test']
+    #read model from disk
     json_file = open('./data/model.json', 'r')
     loaded_model_json = json_file.read()
     json_file.close()
     loaded_model = model_from_json(loaded_model_json)
-    # load weights into new model
+    # load weights into saved model
     loaded_model.load_weights("./data/model.h5")
     print("Loaded model from disk")
-    # compile
+    # compile model
     loaded_model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
     model=loaded_model
     global graph
     graph = tf.get_default_graph()
 
-
+#function to predict the breed from the pre-trained saved model. Input is coming from the standard pre-trained ResNet50 model from Keras
 def Resnet_predict_breed(Resnet_model, img_path):
     # extract bottleneck features
     bottleneck_feature = extract_Resnet50(path_to_tensor(img_path))
@@ -91,13 +92,14 @@ def Resnet_predict_breed(Resnet_model, img_path):
     # return dog breed that is predicted by the model
     return dog_names[np.argmax(predicted_vector)]
 
+#check whether the first letter is a vowel in order to adapt prenom
 def get_correct_prenom(word, vowels):
     if word[0].lower() in vowels:
             return "an"
     else:
         return "a"
 
-
+#final function used for image prediction
 def predict_image(img_path, model):
     vowels=["a","e","i","o","u"]
     #if a dog is detected in the image, return the predicted breed.
@@ -114,23 +116,23 @@ def predict_image(img_path, model):
     else:
         return "No human or dog could be detected, please provide another picture."
 
+#instantiate the model from disk
 instantiate_model()
 
+#starting up the web app
 app = Flask(__name__)
 
 
-
-
-# index webpage displays cool visuals and receives user input text for model
+# index webpage
 @app.route('/')
 @app.route('/index')
 def index():
 
-    # render web page with plotly graphs
+    # render web page from index.html
     return render_template('index.html')
 
 
-# web page that handles user query and displays model results
+# web page that handles the uploaded image and provides a prediction for the dog breed
 @app.route('/predict', methods=['GET', 'POST'])
 def upload():
     # save user input in query
@@ -150,10 +152,10 @@ def upload():
         return result
     return None
 
-
+#main function for running up the flask app
 def main():
     app.run(host='0.0.0.0', port=3001, debug=False)
 
-
+#starting the app on local machine
 if __name__ == '__main__':
     main()
