@@ -140,7 +140,7 @@ def upload():
         f = request.files['image']
         basepath = os.path.dirname(__file__)
         file_path = os.path.join(
-            basepath, 'uploads', secure_filename(f.filename)
+            basepath, 'images', secure_filename(f.filename)
         )
         f.save(file_path)
         print('Starting dog breed prediction...')
