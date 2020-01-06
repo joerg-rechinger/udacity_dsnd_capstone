@@ -1,19 +1,19 @@
 # Udacity Data Science Nanodegree Capstone Project
 ## Dog Breed Classifier
 
-This project is part of Udacity's Data Scientist Nanodegree program. I have decided to chose this project as the final project of the Nanodegree also called the Capstone Project.
+This project is part of Udacity's Data Scientist Nanodegree program. I have decided to choose this project as the final project of the Nanodegree also called the Capstone Project.
 
 ### Libraries
-Python 3.7+
-Keras==2.0.9
-OpenCV
-Matplotlib
-NumPy
-glob
-tqdm
-Scikit-Learn
-Flask
-Tensorflow
+Python 3.7+ <br/>
+Keras==2.0.9 <br/>
+OpenCV <br/>
+Matplotlib <br/>
+NumPy <br/>
+glob <br/>
+tqdm <br/>
+Scikit-Learn <br/>
+Flask <br/>
+Tensorflow <br/>
 
 ### Project motivation
 The goal of this project is to classify images of dogs according to their breed. When the image of a human is provided, it should recommend the best resembling dog breed. I decided to opt for this project as I found the topic of Neural Networks to be very fascinating and wanted to dive deeper into this with some practical work.
@@ -37,9 +37,11 @@ The task was to develop an algorithm that takes an image as an input, pre-proces
 ### Analysis
 I decided to use a pre-trained ResNet50 model as this has shown very good results with regard to accuracy for image classification. In the provided classroom environment, my tests showed an a test accuracy of 82.6555%. This was accomplished by 20 epochs which ran very quickly on the provided GPU.
 Moreover I decided to change the optimizer to "adam" when compiling the model as this was giving me higher accuracy results for the given use case.
+The code in the classroom worked pretty well. What I found difficult, was translating the code into a web app. In the beginning I was getting several errors and identified a different keras version as the root cause of that. Therefore I installed the same version as in the classroom and it worked well afterwards. For setting up the web app, I made use of code snippets as the foundation for the app (credits below). And included all my refactored code there and wired it correctly so that one has a smooth user experience.
 
 ### Conclusion
 I was surprised by the good results of the algorithm. Without doing too much fine-tuning, the algorithm was already providing high accuracy and the predictions were mostly correct. For human faces it seems easier if the face has distinct features that resemble a certain dog breed. Otherwise it starts to guess from some features, but the results vary. For higher accuracy, the parameters could be further optimized, maybe also including more layers into the model. Also by providing an even bigger training data set, the classification accuracy could be improved further.
+Another improvement could be made with regard to performance. It takes quite some in the current setup until the prediction is available to the user. This would need some further analysis and comparison on how to improve the speed here.
 
 ### Author
 Jörg Rechinger
