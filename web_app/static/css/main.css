@@ -20,7 +20,7 @@ input[type="file"] {
 
 .upload-label{
     display: inline-block;
-    padding: 12px 30px;
+    padding: 6px 15px;
     color: #040f0c;
     border: 1px solid #040f0c;
 }
