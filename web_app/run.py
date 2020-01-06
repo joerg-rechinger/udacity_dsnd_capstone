@@ -138,14 +138,13 @@ def upload():
     # save user input in query
     if request.method == 'POST':
         f = request.files['image']
-        basepath = os.path.dirname(__file__)
-        file_path = os.path.join(
-            basepath, 'images', secure_filename(f.filename)
+        filepath = os.path.join(
+            os.path.dirname(__file__), 'images', secure_filename(f.filename)
         )
-        f.save(file_path)
+        f.save(filepath)
         print('Starting dog breed prediction...')
         with graph.as_default():
-        	result = predict_image(file_path, model)
+        	result = predict_image(filepath, model)
         print('Ending dog breed prediction...')
         return result
     return None
