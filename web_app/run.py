@@ -145,10 +145,8 @@ def upload():
         f.save(file_path)
         print('Starting dog breed prediction...')
         with graph.as_default():
-        	preds = predict_image(file_path, model)
+        	result = predict_image(file_path, model)
         print('Ending dog breed prediction...')
-
-        result=preds
         return result
     return None
 
